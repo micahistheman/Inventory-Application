@@ -1,0 +1,398 @@
+package harwoodc482;
+
+
+import PartAndProduct.Inventory;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.Stage;
+
+
+import java.io.IOException;
+import java.net.URL;
+import java.util.Optional;
+import java.util.ResourceBundle;
+
+
+/** The Main Menu Controller provides functionality for the Main Menu of the application.
+*
+* RUNTIME ERROR: an error occured when attempting to load the Menu involving the FXML file
+* created in Scene Builder outside of the IDE and imported. The FXML file was compatible with
+* Java Version 21, not 17. This was resolved by changing the xlms from 21 to 17.0.6-ea
+* in the FXML file and specifying this file as the controller. */
+public class MainMenuController implements Initializable {
+
+
+   /** Reference variable of type Stage. Allows for multiple scenes. */
+   Stage stage;
+
+
+   /** Holds the contents of the FXML document. */
+   Parent scene;
+
+
+   /** Name of the add button for the part table. */
+   @FXML
+   private Button MainAddPartBtn;
+
+
+   /** Name of the add button for the product table. */
+   @FXML
+   private Button MainAddProductBtn;
+
+
+   /** Name of the delete button for the part table. */
+   @FXML
+   private Button MainDeletePartBtn;
+
+
+   /** Name of the delete button for the product table. */
+   @FXML
+   private Button MainDeleteProductBtn;
+
+
+   /** Name of the exit button above the product table to terminate the program. */
+   @FXML
+   private Button MainExitBtn;
+
+
+   /** Name of the modify button for the part table. */
+   @FXML
+   private Button MainModifyPartBtn;
+
+
+   /** Name of the modify button for the product table. */
+   @FXML
+   private Button MainModifyProductBtn;
+
+
+   /** Main Menu's part ID column in the Part Table. */
+   @FXML
+   private TableColumn<Part, Integer> MainPartIDCol;
+
+
+   /** Main Menu's part Inventory column in the Part Table. */
+   @FXML
+   private TableColumn<Part, Integer> MainPartInvCol;
+
+
+   /** Main Menu's part Name column in the Part Table. */
+   @FXML
+   private TableColumn<Part, String> MainPartNameCol;
+
+
+   /** Main Menu's part Price column in the Part Table. */
+   @FXML
+   private TableColumn<Part, Double> MainPartPriceCol;
+
+
+   /** The Main Menu's Search bar for the Part Table. */
+   @FXML
+   private TextField MainPartSearch;
+
+
+   /** The Main Menu's Part Table. */
+   @FXML
+   private TableView<Part> MainPartTable;
+
+
+   /** The Main Menu's product ID column in the Product Table. */
+   @FXML
+   private TableColumn<Product, Integer> MainProductIDCol;
+
+
+   /** The Main Menu's product Inventory column in the Product Table. */
+   @FXML
+   private TableColumn<Product, Integer> MainProductInvCol;
+
+
+   /** The Main Menu's product Name column in the Product Table. */
+   @FXML
+   private TableColumn<Product, String> MainProductNameCol;
+
+
+   /** The Main Menu's product Price column in the Product Table. */
+   @FXML
+   private TableColumn<Product, Double> MainProductPriceCol;
+
+
+   /** The Product Table's search field. */
+   @FXML
+   private TextField MainProductSearch;
+
+
+   /** The Main Menu's Product Table. */
+   @FXML
+   private TableView<Product> MainProductTable;
+
+
+   /** Declares a variable of type Part. */
+   private static Part partToModify;
+
+
+   /** Returns the variable partToModify selected by a user.
+    * @return a selected part. */
+   public static Part getPartToModify() {return partToModify;}
+
+
+   /** Declares a variable of type Product. */
+   private static Product productToModify;
+
+
+   /** Returns the variable productToModify selected by a user.
+    * @return a selected product. */
+   public static Product getProductToModify() {return productToModify;}
+
+
+   /** Loads the AddPart fxml and controller files.
+    * @param event is the add part button selection. */
+   @FXML
+   void AddPartSelected(ActionEvent event) throws IOException {
+       stage = (Stage) ((Button)event.getSource()).getScene().getWindow();
+       scene = FXMLLoader.load(getClass().getResource("AddPart.fxml"));
+       stage.setScene(new Scene(scene));
+       stage.show();
+   }
+
+
+   /** Loads the AddProduct fxml and controller files.
+    * @param event is the add product button selection. */
+   @FXML
+   void AddProductSelected(ActionEvent event) throws IOException {
+       stage = (Stage) ((Button)event.getSource()).getScene().getWindow();
+       scene = FXMLLoader.load(getClass().getResource("AddProduct.fxml"));
+       stage.setScene(new Scene(scene));
+       stage.show();
+   }
+
+
+   /** Removes a part from the inventory.
+    * @param event is the selection of the delete button.
+    * If no part is selected an error message appears to inform the user.
+    * Confirmation message appears to give the user a chance to reconsider
+    * before deleting the part. */
+   @FXML
+   void DeletePartSelected(ActionEvent event) {
+       Part partToDelete = MainPartTable.getSelectionModel().getSelectedItem();
+
+
+       if(partToDelete == null) {
+           Alert alert1 = new Alert(Alert.AlertType.ERROR);
+           alert1.setTitle("Error");
+           alert1.setContentText("No part was selected");
+           alert1.showAndWait();
+       }
+       else {
+           Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+           alert.setTitle("Warning");
+           alert.setContentText("Are you sure you want to delete this part?");
+           Optional<ButtonType> userChoice = alert.showAndWait();
+
+
+           if (userChoice.isPresent() && (userChoice.get() == ButtonType.OK)) {
+               Inventory.deletePart(partToDelete);
+           }
+       } //else end
+   }
+
+
+   /** Removes a product from the inventory.
+    * @param event is the selection of the delete button.
+    * If no product is selected an error message appears to inform the user.
+    * Confirmation message appears to give the user a chance to reconsider
+    * before deleting the product.
+    * If the selected product has parts associated with it, the user receives
+    * an error message. */
+   @FXML
+   void DeleteProductSelected(ActionEvent event) {
+       Product productToDelete = MainProductTable.getSelectionModel().getSelectedItem();
+
+
+       if(productToDelete == null) {
+           Alert alert1 = new Alert(Alert.AlertType.ERROR);
+           alert1.setTitle("Error");
+           alert1.setContentText("No product was selected");
+           alert1.showAndWait();
+       }
+
+
+       else {
+           Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+           alert.setTitle("Warning");
+           alert.setContentText("Are you sure you want to delete this product?");
+           Optional<ButtonType> userChoice = alert.showAndWait();
+
+
+           if (userChoice.isPresent() && (userChoice.get() == ButtonType.OK)) {
+               ObservableList<Part> partsOfProduct = productToDelete.getAllAssociatedParts();
+               if (partsOfProduct.size() > 0) {
+                   Alert alert2 = new Alert(Alert.AlertType.ERROR);
+                   alert2.setTitle("Error");
+                   alert2.setContentText("Parts are associated with this product: cannot delete");
+                   alert2.showAndWait();
+               } else {
+                   Inventory.deleteProduct(productToDelete);
+               }
+           }
+       }//else end
+   }
+
+
+   /** Terminates the program.
+    * @param event is the selection of the exit button. */
+   @FXML
+   void ExitSelected(ActionEvent event) {
+       System.exit(0);
+   }
+
+
+   /** Loads the ModifyPart fxml and controller files.
+    * @param event is the selection of the modify button.
+    * Assigns partToModify with the part selected in the table. */
+   @FXML
+   void ModifyPartSelected(ActionEvent event) throws IOException {
+       partToModify = MainPartTable.getSelectionModel().getSelectedItem();
+
+
+       if(partToModify == null) {
+           Alert alert = new Alert(Alert.AlertType.ERROR);
+           alert.setTitle("Error");
+           alert.setContentText("No part was selected.");
+           alert.showAndWait();
+       }
+       else {
+           stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
+           scene = FXMLLoader.load(getClass().getResource("ModifyPart.fxml"));
+           stage.setScene(new Scene(scene));
+           stage.show();
+       }
+
+
+   }
+
+
+   /** Loads the ModifyProduct fxml and controller files.
+    * @param event is the selection of the modify button.
+    * Assigns partToModify with the product selected in the table. */
+   @FXML
+   void ModifyProductSelected(ActionEvent event) throws IOException {
+       productToModify = MainProductTable.getSelectionModel().getSelectedItem();
+
+
+       if(productToModify == null) {
+           Alert alert = new Alert(Alert.AlertType.ERROR);
+           alert.setTitle("Error");
+           alert.setContentText("No product was selected.");
+           alert.showAndWait();
+       }
+       else {
+           stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
+           scene = FXMLLoader.load(getClass().getResource("ModifyProduct.fxml"));
+           stage.setScene(new Scene(scene));
+           stage.show();
+       }
+
+
+   }
+
+
+   /** Searches for a part based on input in the part search text field.
+    * Cycles through the entire inventory and stores the items that match what the user entered
+    * in another list "partFromInventory" and sets the part table with those items.
+    * If there is no match, an error message appears to inform the user.
+    * @param event enters a string to search for. */
+   @FXML
+   void SearchPartMain(ActionEvent event) {
+
+
+       if(MainPartSearch.getText().isEmpty()) {
+           MainPartTable.setItems(Inventory.getAllParts());
+       }
+       else {
+       ObservableList<Part> allPartsInInventory = Inventory.getAllParts(); //list holds all parts in inventory
+       ObservableList<Part> partFromInventory = FXCollections.observableArrayList();
+       String userString = MainPartSearch.getText();
+
+
+       for(Part part : allPartsInInventory) {
+           if(String.valueOf(part.getId()).contains(userString) || part.getName().contains(userString)) {
+               partFromInventory.add(part);
+           }
+           MainPartTable.setItems(partFromInventory);
+       }
+       if (partFromInventory.isEmpty()) {
+           Alert alert = new Alert(Alert.AlertType.ERROR);
+           alert.setTitle("Part not found");
+           alert.setContentText("Part searched is not in inventory");
+           alert.showAndWait();
+       }
+
+
+       }//else end
+   }
+
+
+   /** Searches for a product based on user input to the product search text field.
+    * @param event enters a string to search for.
+    * Cycles through the entire product inventory and stores items that match
+    * the user's string into a separate list and the product table is set with those items.
+    * If there is no match an error message appears to inform the user. */
+   @FXML
+   void SearchProductMain(ActionEvent event) {
+
+
+       if(MainProductSearch.getText().isEmpty()) {
+           MainProductTable.setItems(Inventory.getAllProducts());
+       }
+       else {
+           ObservableList<Product> allProductsInInventory = Inventory.getAllProducts(); //list holds all parts in inventory
+           ObservableList<Product> productsFromInventory = FXCollections.observableArrayList();
+           String userString = MainProductSearch.getText();
+
+
+           for (Product product : allProductsInInventory) {
+               if (String.valueOf(product.getProductID()).contains(userString) || product.getProductName().contains(userString)) {
+                   productsFromInventory.add(product);
+               }
+           }
+           MainProductTable.setItems(productsFromInventory);
+           if(productsFromInventory.isEmpty()) {
+               Alert alert = new Alert(Alert.AlertType.ERROR);
+               alert.setTitle("Product not found");
+               alert.setContentText("Product searched is not in inventory");
+               alert.showAndWait();
+           }
+       }//else end
+   }
+
+
+   /** Generates the part and product tables.
+    * @param url resolves paths for the root object.
+    * @param resourceBundle localizes the root object. */
+   @Override
+   public void initialize(URL url, ResourceBundle resourceBundle) {
+       //Part Table on left side of the main menu
+       MainPartTable.setItems(Inventory.getAllParts());
+       MainPartIDCol.setCellValueFactory(new PropertyValueFactory<>("id"));
+       MainPartNameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
+       MainPartInvCol.setCellValueFactory(new PropertyValueFactory<>("stock"));
+       MainPartPriceCol.setCellValueFactory(new PropertyValueFactory<>("price"));
+
+
+       //Product Table on the right side
+       MainProductTable.setItems(Inventory.getAllProducts());
+       MainProductIDCol.setCellValueFactory(new PropertyValueFactory<>("productID"));
+       MainProductNameCol.setCellValueFactory(new PropertyValueFactory<>("productName"));
+       MainProductInvCol.setCellValueFactory(new PropertyValueFactory<>("productINV"));
+       MainProductPriceCol.setCellValueFactory(new PropertyValueFactory<>("productPrice"));
+
+
+   }
+}
