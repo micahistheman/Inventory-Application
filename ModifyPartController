@@ -1,0 +1,226 @@
+package harwoodc482;
+
+
+import PartAndProduct.Inventory;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.stage.Stage;
+
+
+import java.io.IOException;
+import java.net.URL;
+import java.util.ResourceBundle;
+
+
+/** Modify Part class controls the methods an operation of the modify part menu. */
+public class ModifyPartMenuController implements Initializable {
+
+
+   /** Label which informs the user if an invalid data type was entered for the machine ID. */
+   @FXML
+   private Label InvalidMachineID;
+
+
+   /** Label that changes based on the radio button selection. */
+   @FXML
+   private Label MachineToCompanyID;
+
+
+   /** Name of the modify part menu's cancel button. */
+   @FXML
+   private Button ModPartCancelBtn;
+
+
+   /** Part ID text field. Cannot be edited by the user. */
+   @FXML
+   private TextField ModPartIDTXT;
+
+
+   /** In House radio button. */
+   @FXML
+   private RadioButton ModPartInHouseBtn;
+
+
+   /** Part inventory text field. */
+   @FXML
+   private TextField ModPartInvTXT;
+
+
+   /** Part maximum text field. */
+   @FXML
+   private TextField ModPartMaxTXT;
+
+
+   /** Part minimum text field. */
+   @FXML
+   private TextField ModPartMinTXT;
+
+
+   /** Part Name text field. */
+   @FXML
+   private TextField ModPartNameTXT;
+
+
+   /** Outsourced radio button. */
+   @FXML
+   private RadioButton ModPartOutsourceBtn;
+
+
+   /** Part price text field. */
+   @FXML
+   private TextField ModPartPriceTXT;
+
+
+   /** Name of the save button on the Modify Part menu. */
+   @FXML
+   private Button ModPartSaveBtn;
+
+
+   /** Text field where the user will enter either the Machine ID or Company Name. */
+   @FXML
+   private TextField ModPartSwitchTXT;
+
+
+   /** Variable of type part which holds the part selected from the main menu. */
+   private Part partToModify;
+
+
+   /** Sets the text fields for the part to modify.
+    * @param url resolves paths for the root object.
+    * @param resourceBundle localizes the root object.*/
+   @Override
+   public void initialize(URL url, ResourceBundle resourceBundle) {
+       partToModify = MainMenuController.getPartToModify();
+//sets all text fields with the values of the chosen part's attributes
+       ModPartIDTXT.setText(String.valueOf(partToModify.getId()));
+       ModPartIDTXT.setEditable(false);
+       ModPartNameTXT.setText(partToModify.getName());
+       ModPartInvTXT.setText(String.valueOf(partToModify.getStock()));
+       ModPartPriceTXT.setText(String.valueOf(partToModify.getPrice()));
+       ModPartMaxTXT.setText(String.valueOf(partToModify.getMax()));
+       ModPartMinTXT.setText(String.valueOf(partToModify.getMin()));
+
+
+       if (partToModify instanceof InHousePart) {
+           ModPartInHouseBtn.setSelected(true);
+           MachineToCompanyID.setText("MachineID");
+           ModPartSwitchTXT.setText(String.valueOf(((InHousePart) partToModify).getMachineID()));
+       }
+       else if (partToModify instanceof OutsourcedPart) {
+           ModPartOutsourceBtn.setSelected(true);
+           MachineToCompanyID.setText("Company Name");
+           ModPartSwitchTXT.setText(((OutsourcedPart) partToModify).getCompanyName());
+       }
+   }
+
+
+   /** Reference variable of type Stage. Allows for multiple scenes. */
+   Stage stage;
+
+
+   /** Holds the contents of the FXML document. */
+   Parent scene;
+
+
+   /** Sets the label to Machine ID if In House is selected. */
+   @FXML
+   public void InHouseSelected() {
+       MachineToCompanyID.setText("Machine ID");
+   }
+
+
+   /** Sets the label to Company name is Outsourced is selected. */
+   @FXML
+   public void OutsourcedSelected() {
+       MachineToCompanyID.setText("Company Name");
+   }
+
+
+   /** Saves the part with its modifications and removes the previous version.
+    * Returns a user to the main menu if the entries are valid; otherwise
+    * an error will display.
+    * @param event user selects the save button. */
+   @FXML
+   public void ModPartSaveSelected(ActionEvent event) {
+
+
+       try {
+           boolean modifiedPart = false;
+           int modPartID = Integer.parseInt(ModPartIDTXT.getText());
+           String modPartName = ModPartNameTXT.getText();
+           int modPartInventory = Integer.parseInt(ModPartInvTXT.getText());
+           double modPartPrice = Double.parseDouble(ModPartPriceTXT.getText());
+           int modPartMax = Integer.parseInt(ModPartMaxTXT.getText());
+           int modPartMin = Integer.parseInt(ModPartMinTXT.getText());
+           int modPartMachineID;
+           String modPartCompanyName;
+
+
+           if(modPartMax < modPartInventory || modPartMin > modPartInventory || modPartMin >= modPartMax) {
+               Alert alert = new Alert(Alert.AlertType.ERROR);
+               alert.setTitle("Inventory not sufficient for provided max and min values");
+               alert.setContentText("Check the minimum and maximum values");
+               alert.showAndWait();
+           }
+           else {
+
+
+               if (ModPartInHouseBtn.isSelected()) {
+                   try {
+                       int index = Inventory.getAllParts().indexOf(partToModify);
+                       modPartMachineID = Integer.parseInt(ModPartSwitchTXT.getText());
+                       InHousePart newInHousePart = new InHousePart(modPartID, modPartName, modPartPrice, modPartInventory, modPartMin, modPartMax, modPartMachineID);
+                       Inventory.updatePart(index, newInHousePart);
+                       //Inventory.addPart(newInHousePart);
+                       //Inventory.deletePart(partToModify);
+                       modifiedPart = true;
+                   }catch(Exception MachineIDError) {
+                       InvalidMachineID.setText("Machine ID must be an integer");
+                   }
+               }
+               if (ModPartOutsourceBtn.isSelected()) {
+                   try {
+                       int index = Inventory.getAllParts().indexOf(partToModify);
+                       modPartCompanyName = ModPartSwitchTXT.getText();
+                       OutsourcedPart newOutsourcedPart = new OutsourcedPart(modPartID, modPartName, modPartPrice, modPartInventory, modPartMin, modPartMax, modPartCompanyName);
+                       Inventory.updatePart(index, newOutsourcedPart);
+
+
+                       modifiedPart = true;
+                   }catch(Exception CompanyNameError) {
+                       InvalidMachineID.setText("Company Name must be a string");
+                   }
+               }
+               if(modifiedPart) {
+                   ModPartCancelSelected(event); //Returns to the main menu after part is successfully added
+               }
+           }
+
+
+       }catch (Exception InvalidInput) {
+           Alert alert = new Alert(Alert.AlertType.ERROR);
+           alert.setTitle("Error");
+           alert.setHeaderText("Part could not be modified");
+           alert.setContentText("Text fields are empty or contain invalid values");
+           alert.showAndWait();
+       }
+   }
+
+
+   /** Returns a user to the main menu.
+    * @param event user selects the cancel button. */
+   @FXML
+   public void ModPartCancelSelected(ActionEvent event) throws IOException {
+       stage = (Stage) ((Button)event.getSource()).getScene().getWindow();
+       scene = FXMLLoader.load(getClass().getResource("MainMenu.fxml"));
+       stage.setScene(new Scene(scene));
+       stage.show();
+   }
+
+
+}
