@@ -1,0 +1,200 @@
+package harwoodc482;
+
+
+import PartAndProduct.Inventory;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.stage.Stage;
+
+
+import java.io.IOException;
+import java.net.URL;
+import java.util.ResourceBundle;
+
+
+/** The add part class controls the methods of the add part menu.
+* FUTURE IMPROVEMENT: add labels or error messages stating specifically what text
+* fields contain invalid values and what the correct variable type should be. */
+public class AddPartMenuController implements Initializable {
+
+
+   /** Name of the cancel button in the Add Part Menu. */
+   @FXML
+   private Button AddPartCancel;
+
+
+   /** Part ID text field. Uneditable. */
+   @FXML
+   private TextField AddPartIDTXT;
+
+
+   /** Radio button for In-House Parts. */
+   @FXML
+   private RadioButton AddPartInHouseBtn;
+
+
+   /** Part inventory text field. */
+   @FXML
+   private TextField AddPartInvTXT;
+
+
+   /** Part maximum text field. */
+   @FXML
+   private TextField AddPartMaxTXT;
+
+
+   /** Part minimum text field. */
+   @FXML
+   private TextField AddPartMinTXT;
+
+
+   /** Part name text field. */
+   @FXML
+   private TextField AddPartNameTXT;
+
+
+   /** Radio button for outsourced Parts. */
+   @FXML
+   private RadioButton AddPartOutsourceBtn;
+
+
+   /** Part price text field. */
+   @FXML
+   private TextField AddPartPriceTXT;
+
+
+   /** Save button on the Add Part menu. */
+   @FXML
+   private Button AddPartSave;
+
+
+   /** Text field to fill out the Machine ID or Company Name based on the radio button selection. */
+   @FXML
+   private TextField AddPartSwitchTXT;
+
+
+   /** Label that switches between Machine ID or Company name based on the radio button selection. */
+   @FXML
+   private Label MachineToCompanyID;
+
+
+   /** Informs a user if an invalid value was entered for the Machine ID. */
+   @FXML
+   private Label InvalidMachineID;
+
+
+   /** Initializes add part controller.
+    * Sets a new ID for the part which cannot be edited.
+    * Selects the In house button which the user can change.
+    * @param url  resolves paths for the root object
+    * @param resourceBundle localizes the root object. */
+   @Override
+   public void initialize(URL url, ResourceBundle resourceBundle) {
+       AddPartIDTXT.setText(String.valueOf(Inventory.generatePartID()));
+       AddPartIDTXT.setEditable(false);
+       AddPartInHouseBtn.setSelected(true); //In house is default option when opening the add part page
+   }
+
+
+   /** Reference variable of type Stage. Allows for multiple scenes. */
+   Stage stage;
+
+
+   /** Holds the contents of the FXML document. */
+   Parent scene;
+
+
+   /** Sets the label to Machine ID if In House is selected. */
+   @FXML
+   public void AddPartInHouseSelected() {
+       MachineToCompanyID.setText("Machine ID");
+   }
+
+
+   /** Sets the label to Company Name if Outsourced is selected. */
+   @FXML
+   public void AddPartOutsourcedSelected() {
+       MachineToCompanyID.setText("Company Name");
+   }
+
+
+   /** Selecting the save button will add the new part to the inventory.
+    * If a text field contains an invalid type of value, an error message will appear.
+    * Gives a specific message is Machine ID is invalid.
+    * Returns to the main menu when a part is successfully added.
+    * @param event selecting the save button. */
+   @FXML
+   public void AddPartSaveSelected(ActionEvent event) {
+       try {
+           boolean addedPart = false;
+           int addPartID = Integer.valueOf(AddPartIDTXT.getText());
+           String addPartName = AddPartNameTXT.getText();
+           int addPartInventory = Integer.parseInt(AddPartInvTXT.getText());
+           double addPartPrice = Double.parseDouble(AddPartPriceTXT.getText());
+           int addPartMax = Integer.parseInt(AddPartMaxTXT.getText());
+           int addPartMin = Integer.parseInt(AddPartMinTXT.getText());
+           int addPartMachineID;
+           String addPartCompanyName;
+
+
+           if(addPartMax < addPartInventory || addPartMin > addPartInventory || addPartMin >= addPartMax) {
+               Alert alert = new Alert(Alert.AlertType.ERROR);
+               alert.setTitle("Inventory not sufficient for provided max and min values");
+               alert.setContentText("Check the minimum and maximum values");
+               alert.showAndWait();
+           }
+           else {
+               if (AddPartInHouseBtn.isSelected()) {
+                   try {
+                       addPartMachineID = Integer.parseInt(AddPartSwitchTXT.getText());
+                       InHousePart newInHousePart = new InHousePart(addPartID, addPartName, addPartPrice, addPartInventory, addPartMin, addPartMax, addPartMachineID);
+                       Inventory.addPart(newInHousePart);
+                       addedPart = true;
+                   }catch(Exception MachineIDError) {
+                       InvalidMachineID.setText("Machine ID must be an integer");
+                   }
+               }
+               if (AddPartOutsourceBtn.isSelected()) {
+                   try {
+                       addPartCompanyName = AddPartSwitchTXT.getText();
+                       OutsourcedPart newOutsourcedPart = new OutsourcedPart(addPartID, addPartName, addPartPrice, addPartInventory, addPartMin, addPartMax, addPartCompanyName);
+                       //newOutsourcedPart.setPartID(StoredItems.generatePartID());
+                       Inventory.addPart(newOutsourcedPart);
+                       addedPart = true;
+                   }catch(Exception CompanyNameError) {
+                       InvalidMachineID.setText("Company Name must be a string");
+                   }
+               }
+               if(addedPart) {
+                   AddPartCancelSelected(event); //Returns to the main menu after part is successfully added
+               }
+           }//else end
+
+
+       }catch(Exception InvalidInput) {
+           Alert alert = new Alert(Alert.AlertType.ERROR);
+           alert.setTitle("Error");
+           alert.setHeaderText("Part could not be added");
+           alert.setContentText("Text fields are empty or contain invalid values");
+           alert.showAndWait();
+       }
+   }
+
+
+   /** Returns the user to the Main Menu.
+    * @param event selecting the cancel button. */
+   @FXML
+   public void AddPartCancelSelected(ActionEvent event) throws IOException {
+       stage = (Stage) ((Button)event.getSource()).getScene().getWindow();
+       scene = FXMLLoader.load(getClass().getResource("MainMenu.fxml"));
+       stage.setScene(new Scene(scene));
+       stage.show();
+   }
+
+
+}
