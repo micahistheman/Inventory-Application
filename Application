@@ -1,0 +1,71 @@
+package harwoodc482;
+
+
+import PartAndProduct.Inventory;
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.stage.Stage;
+
+
+import java.io.IOException;
+
+
+//Micah Harwood C482 WGU
+
+
+//JAVADOC FOLDER is titled C482Javadoc. File path is /HarwoodC482/src/main/C482Javadoc
+
+
+/** The Inventory Management Application class loads the MainMenu fxml file
+* The main method contains a hardcoded example of adding a product to Stored Items
+* then launches the application.
+* An improvement for a future version of this application
+* would be an addition of labels or error messages specifying which
+* input text field caused the error when adding or modifying a part or product. */
+public class InventoryManagementApplication extends Application {
+
+
+   /** The start method loads the main menu screen
+    * 900 pixels wide, 400 pixels long, setting the
+    * page title as "Main Menu". */
+   @Override
+   public void start(Stage stage) throws IOException {
+       FXMLLoader fxmlLoader = new FXMLLoader(InventoryManagementApplication.class.getResource("MainMenu.fxml"));
+       Scene scene = new Scene(fxmlLoader.load(), 900, 400);
+       stage.setTitle("Main Menu");
+       stage.setScene(scene);
+       stage.show();
+   }
+
+
+   /** The stop method is unnecessary but is here
+    * to verify its existence by printing
+    * "Finished" when the program terminates
+    * by a method other than the exit button. */
+   public void stop() {
+       System.out.println("Finished");
+   }
+
+
+   /** The main method creates products Hammer and Drill
+    * and stores it in the product Stored Items inventory list
+    * then launches the application*/
+   public static void main(String[] args) {
+
+
+       int productID = Inventory.generateProductID();
+       Product Hammer = new Product(productID, "Hammer", 6, 20.20, 10, 1);
+       Inventory.addProduct(Hammer);
+
+
+       productID = Inventory.generateProductID();
+       Product Drill = new Product(productID, "Drill", 4, 5.00, 10, 1);
+       Inventory.addProduct(Drill);
+
+
+
+
+       launch(args);
+   }
+}
