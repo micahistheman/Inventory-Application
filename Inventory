@@ -1,0 +1,160 @@
+package PartAndProduct;
+
+
+import harwoodc482.Part;
+import harwoodc482.Product;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+
+
+/** The Stored Items class serves as the inventory of the program. */
+public class Inventory {
+
+
+   /** List which holds the stored parts throughout the session. */
+   private static ObservableList<Part> allParts = FXCollections.observableArrayList();
+
+
+   /** List which holds the stored products throughout the session. */
+   private static ObservableList<Product> allProducts = FXCollections.observableArrayList();
+
+
+   /** Method that returns the list of stored parts.
+    * @return stored parts list. */
+   public static ObservableList<Part> getAllParts() {return allParts;}
+
+
+   /** Method that returns the list of stored products.
+    * @return stored products list. */
+   public static ObservableList<Product> getAllProducts() {return allProducts;}
+
+
+   /** Method to add a part to the stored parts list.
+    * @param part part to add.  */
+   public static void addPart(Part part) {
+       allParts.add(part);}
+
+
+   /** Method to add a product to the stored products list.
+    * @param product product to add.  */
+   public static void addProduct(Product product) {
+       allProducts.add(product);}
+
+
+   /** Takes an integer and searches through the part list to find a part with an ID that matches the argument.
+    * @param id id to search for.
+    * @return the part with the matching ID number. */
+   public static Part lookupPart(int id) {
+       Part thePart = null;
+       for(Part part : allParts) {
+           if (part.getId() == id) {
+               thePart = part;
+               break;
+           }
+       }
+       return thePart;
+   }
+
+
+   /** Takes an integer and searches through the product list to find a product with an ID that matches the argument.
+    * @param id id to search for.
+    * @return the product with the matching ID number. */
+   public static Product lookupProduct(int id) {
+       Product theProduct = null;
+       for(Product product : allProducts) {
+           if(product.getProductID() == id) {
+               theProduct = product;
+               break;
+           }
+       }
+       return theProduct;
+   }
+
+
+
+
+   /** Method that returns a list meant to lookup a part by its name, partial or not.
+    * @param partString the string entered to fill the foundParts list with parts whose name contains the string.
+    * @return the found parts list holding parts with matching strings. */
+   public static ObservableList<Part> lookupPart(String partString) {
+       ObservableList<Part> foundParts = FXCollections.observableArrayList();
+       for(Part part : allParts) {
+           if(part.getName().toLowerCase().contains(partString.toLowerCase())) {
+               foundParts.add(part);
+           }
+       }
+       return foundParts;
+   }
+
+
+   /** Method that returns a list meant to lookup a product by its name, partial or not.
+    * @param productString the string entered to fill the foundProducts list with products whose names contain the string.
+    * @return the found products list holding the products with matching strings. */
+   public static ObservableList<Product> lookupProduct(String productString) {
+       ObservableList<Product> foundProducts = FXCollections.observableArrayList();
+       for(Product product : allProducts) {
+           if(product.getProductName().toLowerCase().contains(productString.toLowerCase())) {
+               foundProducts.add(product);
+           }
+       }
+       return foundProducts;
+   }
+
+
+
+
+   /** Method to update a part in the allParts list.
+    * @param index the location of the part being updated in the list.
+    * @param selectedPart the part being updated.*/
+   public static void updatePart(int index, Part selectedPart) {
+       allParts.set(index, selectedPart);
+   }
+
+
+   /** Method to update a part in the allProducts list.
+    * @param index the location of the product being updated in the list.
+    * @param selectedProduct the product being updated.*/
+   public static void updateProduct(int index, Product selectedProduct) {
+       allProducts.set(index, selectedProduct);
+   }
+
+
+
+
+   /** Method to remove a part form the stored parts list.
+    * @param selectedPart part to remove.
+    * @return true if the part was successfully removed, otherwise false. */
+   public static boolean deletePart(Part selectedPart) {
+       return allParts.remove(selectedPart);
+   }
+
+
+   /** Method to remove a product from the stored products list.
+    * @param selectedProduct product to remove.
+    * @return true if the product was successfully removed, otherwise false. */
+   public static boolean deleteProduct(Product selectedProduct) {
+       return allProducts.remove(selectedProduct);
+   }
+
+
+
+
+   /** Initializes the IDPart variable used to generate part IDs. */
+   private static int IDPart = 0;
+
+
+   /** Method to generate a new part ID when a part is being added.
+    * @return part ID incremented by 1. */
+   public static int generatePartID() {IDPart += 1; return IDPart;}
+
+
+   /** Initializes the IDProduct variable used to generate product IDs. */
+   private static int IDProduct = 0;
+
+
+   /** Method to generate a new product ID when a product is being added.
+    * @return product ID incremented by 1. */
+   public static int generateProductID() {IDProduct += 1; return IDProduct;}
+
+
+}//class end brace
