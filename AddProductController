@@ -1,0 +1,287 @@
+package harwoodc482;
+
+
+import PartAndProduct.Inventory;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.Stage;
+
+
+import java.io.IOException;
+import java.net.URL;
+import java.util.Optional;
+import java.util.ResourceBundle;
+
+
+/** Add Product class controls the methods and operation of the add product menu. */
+public class AddProductMenuController implements Initializable {
+
+
+   /** Name of the add button in the add product menu. */
+   @FXML
+   private Button AddProductBtn;
+
+
+   /** Name of the cancel button in the add product menu. */
+   @FXML
+   private Button AddProductCancelBtn;
+
+
+   /** The part ID column in the part table of the add product menu. */
+   @FXML
+   private TableColumn<Part, Integer> AddProductIDCol;
+
+
+   /** Product ID text field. Not editable by the user. */
+   @FXML
+   private TextField AddProductIDTXT;
+
+
+   /** The part Inventory column in the part table of the add product menu. */
+   @FXML
+   private TableColumn<Part, Integer> AddProductInvCol;
+
+
+   /** Product maximum text field. */
+   @FXML
+   private TextField AddProductMaxTXT;
+
+
+   /** Product minimum text field. */
+   @FXML
+   private TextField AddProductMinTXT;
+
+
+   /** Part name column in the part table of the add product menu. */
+   @FXML
+   private TableColumn<Part, String> AddProductNameCol;
+
+
+   /** Product name text field. */
+   @FXML
+   private TextField AddProductNameTXT;
+
+
+   /** Part price column in teh part table of the add product menu. */
+   @FXML
+   private TableColumn<Part, Double> AddProductPriceCol;
+
+
+   /** Product price text field. */
+   @FXML
+   private TextField AddProductPriceTXT;
+
+
+   /** Name of the remove associated part button. */
+   @FXML
+   private Button AddProductRemoveBtn;
+
+
+   /** Save button to add the product to the inventory. */
+   @FXML
+   private Button AddProductSaveBtn;
+
+
+   /** Search field for the part table in the add product menu. */
+   @FXML
+   private TextField AddProductSearchTXT;
+
+
+   /** Product inventory text field. */
+   @FXML
+   private TextField AddProductinvTXT;
+
+
+   /** Part ID column for the associated part table in the add product menu. */
+   @FXML
+   private TableColumn<Part, Integer> AddedPartIDCol;
+
+
+   /** Part inventory column for the associated part table in the add product menu. */
+   @FXML
+   private TableColumn<Part, Integer> AddedPartInvCol;
+
+
+   /** Part name column for the associated part table in the add product menu. */
+   @FXML
+   private TableColumn<Part, String> AddedPartNameCol;
+
+
+   /** Part price column for the associated part table in the add product menu. */
+   @FXML
+   private TableColumn<Part, Double> AddedPartPriceCol;
+
+
+   /** Part table that mirrors the main menu table with the full part inventory. */
+   @FXML
+   private TableView<Part> AvailablePartTable;
+
+
+   /** Selected part table where parts associated with the product are listed. */
+   @FXML
+   private TableView<Part> SelectedPartTable;
+
+
+   /** List of parts that are associated with a product. */
+   private ObservableList<Part> partsOfTheProduct = FXCollections.observableArrayList();
+
+
+   /** Initializes the add product controller.
+    * Sets the available and associated part tables.
+    * Generates a new product ID that cannot be changed.
+    * @param url resolves paths for the root object.
+    * @param resourceBundle localizes the root object. */
+   @Override
+   public void initialize(URL url, ResourceBundle resourceBundle) {
+       AddProductIDTXT.setText(String.valueOf(Inventory.generateProductID()));
+       AddProductIDTXT.setEditable(false);
+
+
+       AvailablePartTable.setItems(Inventory.getAllParts());
+       AddProductIDCol.setCellValueFactory(new PropertyValueFactory<>("id"));
+       AddProductNameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
+       AddProductInvCol.setCellValueFactory(new PropertyValueFactory<>("stock"));
+       AddProductPriceCol.setCellValueFactory(new PropertyValueFactory<>("price"));
+
+
+       //SelectedPartTable.setItems(partsOfTheProduct);
+       AddedPartIDCol.setCellValueFactory(new PropertyValueFactory<>("id"));
+       AddedPartNameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
+       AddedPartInvCol.setCellValueFactory(new PropertyValueFactory<>("stock"));
+       AddedPartPriceCol.setCellValueFactory(new PropertyValueFactory<>("price"));
+   }
+
+
+   /** Reference variable of type Stage. Allows for multiple scenes. */
+   Stage stage;
+
+
+   /** Holds the contents of the FXML document. */
+   Parent scene;
+
+
+   /** Searches the available part table for a part specified by the user.
+    * @param event user enters a string into the search text field. */
+   @FXML
+   public void AddProductPartSearch(ActionEvent event) {
+       if (AddProductSearchTXT.getText().isEmpty()) {
+           AvailablePartTable.setItems(Inventory.getAllParts());
+       }
+
+
+       ObservableList<Part> allPartsInInventory = Inventory.getAllParts(); //list holds all parts in inventory
+       ObservableList<Part> partFromInventory = FXCollections.observableArrayList();
+       String userString = AddProductSearchTXT.getText();
+       for (Part part : allPartsInInventory) {
+           if (String.valueOf(part.getId()).contains(userString) || part.getName().contains(userString)) {
+               partFromInventory.add(part);
+           }
+       }
+       AvailablePartTable.setItems(partFromInventory); //Displays list of parts based on the ID or name the user entered
+       if(partFromInventory.isEmpty()) {
+           Alert alert = new Alert(Alert.AlertType.ERROR);
+           alert.setTitle("Part not found");
+           alert.setContentText("Part searched is not in inventory");
+           alert.showAndWait();
+       }
+   }
+
+
+   /** Adds a part selected from the available part table to the associated part table.
+    * @param event user selects a part and presses the add button. */
+   @FXML
+   public void AddProductAddBtnSelected(ActionEvent event) {
+       Part partSelected = AvailablePartTable.getSelectionModel().getSelectedItem();
+       partsOfTheProduct.add(partSelected);
+       SelectedPartTable.setItems(partsOfTheProduct);
+   }
+
+
+   /** Removes an associated part.
+    * Prompts the user for confirmation, removes the part form the
+    * associated parts list and sets the table with the updated list.
+    * @param event user selects a part to delete and presses the remove button. */
+   @FXML
+   public void AddProductRmvAscPartSelected(ActionEvent event) {
+       Part partToDelete = SelectedPartTable.getSelectionModel().getSelectedItem();
+       Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+       alert.setTitle("Warning");
+       alert.setContentText("Are you sure you want to remove this part?");
+       Optional<ButtonType> userChoice = alert.showAndWait();
+
+
+       if(userChoice.isPresent() && userChoice.get() == ButtonType.OK) {
+           partsOfTheProduct.remove(partToDelete);
+           SelectedPartTable.setItems(partsOfTheProduct);
+       }
+   }
+
+
+   /** Takes a user back to the main menu screen.
+    * @param event user chooses the cancel button. */
+   @FXML
+   public void AddProductCancelBtnSelected(ActionEvent event) throws IOException {
+       stage = (Stage) ((Button)event.getSource()).getScene().getWindow();
+       scene = FXMLLoader.load(getClass().getResource("MainMenu.fxml"));
+       stage.setScene(new Scene(scene));
+       stage.show();
+   }
+
+
+   /** Saves a new product to the inventory.
+    * Checks if invalid data types were entered into the text fields or if
+    * the inventory works with the given minimum and maximum values.
+    * When a product is successfully added, the user is automatically taken
+    * back to the main menu.
+    * @param event user selects the save button. */
+   @FXML
+   public void AddProductSaveBtnSelected(ActionEvent event) {
+       try {
+           int addProductID = Integer.valueOf(AddProductIDTXT.getText());
+           String addProductName = AddProductNameTXT.getText();
+           int addProductINV = Integer.parseInt(AddProductinvTXT.getText());
+           double addProductPrice = Double.parseDouble(AddProductPriceTXT.getText());
+           int addProductMax = Integer.parseInt(AddProductMaxTXT.getText());
+           int addProductMin = Integer.parseInt(AddProductMinTXT.getText());
+
+
+           if(addProductMax < addProductINV || addProductMin > addProductINV || addProductMin >= addProductMax) {
+               Alert alert = new Alert(Alert.AlertType.ERROR);
+               alert.setTitle("Inventory not sufficient for provided max and min values");
+               alert.setContentText("Check the minimum and maximum values");
+               alert.showAndWait();
+           }
+           else {
+               Product productToAdd = new Product(addProductID, addProductName, addProductINV, addProductPrice, addProductMax, addProductMin);
+               //StoredItems.addProduct(productToAdd);
+
+
+               for (Part part : partsOfTheProduct) {
+                   productToAdd.addAllPartsInProduct(part);
+               }
+               Inventory.addProduct(productToAdd);
+
+
+               AddProductCancelBtnSelected(event); //return to the main menu after the product has been added
+           }
+
+
+       }catch(Exception InvalidInput) {
+           Alert alert = new Alert(Alert.AlertType.ERROR);
+           alert.setTitle("Error");
+           alert.setHeaderText("Product could not be added");
+           alert.setContentText("Text fields are empty or contain invalid values");
+           alert.showAndWait();
+       }
+   }
+
+
+}
