@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="700.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="harwoodc482.ModifyProductMenuController">
+  <children>
+     <Label layoutX="50.0" layoutY="39.0" text="Modify Product">
+        <font>
+           <Font size="18.0" />
+        </font>
+     </Label>
+     <VBox layoutX="29.0" layoutY="100.0" prefHeight="300.0" prefWidth="300.0">
+        <children>
+           <GridPane prefHeight="202.0" prefWidth="300.0">
+             <columnConstraints>
+               <ColumnConstraints hgrow="SOMETIMES" maxWidth="71.0" minWidth="10.0" prefWidth="62.0" />
+               <ColumnConstraints hgrow="SOMETIMES" maxWidth="120.0" minWidth="10.0" prefWidth="110.0" />
+                 <ColumnConstraints hgrow="SOMETIMES" maxWidth="83.0" minWidth="10.0" prefWidth="69.0" />
+                 <ColumnConstraints hgrow="SOMETIMES" maxWidth="122.0" minWidth="10.0" prefWidth="110.0" />
+             </columnConstraints>
+             <rowConstraints>
+               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+             </rowConstraints>
+              <children>
+                 <Label text="ID" />
+                 <Label text="Name" GridPane.rowIndex="1" />
+                 <Label text="INV" GridPane.rowIndex="2" />
+                 <Label text="Price" GridPane.rowIndex="3" />
+                 <Label text="Max" GridPane.rowIndex="4" />
+                 <Label text="  Min" GridPane.columnIndex="2" GridPane.rowIndex="4" />
+                 <TextField fx:id="ModProductIDTXT" GridPane.columnIndex="1" />
+                 <TextField fx:id="ModProductNameTXT" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                 <TextField fx:id="ModProductInvTXT" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                 <TextField fx:id="ModProductPriceTXT" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                 <TextField fx:id="ModProductMaxTXT" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                 <TextField fx:id="ModProductMinTXT" GridPane.columnIndex="3" GridPane.rowIndex="4" />
+              </children>
+           </GridPane>
+        </children>
+     </VBox>
+     <TextField fx:id="ModProductPartSearch" layoutX="505.0" layoutY="75.0" onAction="#ModProductPartSearching" />
+     <TableView fx:id="ModProductPartTable" layoutX="368.0" layoutY="109.0" prefHeight="158.0" prefWidth="318.0">
+       <columns>
+         <TableColumn fx:id="ModProductPartIDCol" prefWidth="75.0" text="Part ID" />
+         <TableColumn fx:id="ModProductPartNameCol" prefWidth="75.0" text="Part Name" />
+           <TableColumn fx:id="ModProductINVCol" prefWidth="75.0" text="Inventory Level" />
+           <TableColumn fx:id="ModProductPriceCol" prefWidth="90.0" text="Price Per Unit" />
+       </columns>
+     </TableView>
+     <Button fx:id="ModiProductAddBtn" layoutX="625.0" layoutY="287.0" mnemonicParsing="false" onAction="#ModProductAddBtnSelected" text="Add" />
+     <TableView fx:id="ModProductSelPartTable" layoutX="368.0" layoutY="331.0" prefHeight="158.0" prefWidth="318.0">
+       <columns>
+         <TableColumn fx:id="ModProductSelIDCol" prefWidth="75.0" text="Part ID" />
+         <TableColumn fx:id="ModProductSelNameCol" prefWidth="75.0" text="Part Name" />
+           <TableColumn fx:id="ModProductSelINVCol" prefWidth="75.0" text="Inventory Level" />
+           <TableColumn fx:id="ModProductSelPriceCol" prefWidth="90.0" text="Price Per Unit" />
+       </columns>
+     </TableView>
+     <Button fx:id="ModProductRemoveBtn" layoutX="515.0" layoutY="504.0" mnemonicParsing="false" onAction="#ModProductRmvAscPartBtnSelected" text="Remove Associated Part" />
+     <Button fx:id="ModProductSaveBtn" layoutX="515.0" layoutY="546.0" mnemonicParsing="false" onAction="#ModProductSaveBtnSelected" text="Save" />
+     <Button fx:id="ModProductCancelBtn" layoutX="610.0" layoutY="545.0" mnemonicParsing="false" onAction="#ModProductCancelBtnSelected" text="Cancel" />
+  </children>
+</AnchorPane>
