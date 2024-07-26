@@ -1,0 +1,152 @@
+package harwoodc482;
+
+
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+
+
+/** The product class used for product instances created by the user. */
+public class Product {
+
+
+   /** Product ID variable of type integer. */
+   private int productID;
+
+
+   /** Product name variable of type String. */
+   private String productName;
+
+
+   /** Product inventory variable of type integer. */
+   private int productINV;
+
+
+   /** Product price variable of type double. */
+   private double productPrice;
+
+
+   /** Product maximum variable of type integer. */
+   private int max;
+
+
+   /** Product minimum variable of type integer. */
+   private int min;
+
+
+   /** Product constructor to build a user's product.
+    * @param productID product ID
+    * @param productName the product's name
+    * @param productINV the product's inventory
+    * @param productPrice price of the product
+    * @param max product maximum
+    * @param min product minimum */
+   public Product(int productID, String productName, int productINV, double productPrice, int max, int min) {
+       this.productID = productID;
+       this.productName = productName;
+       this.productINV = productINV;
+       this.productPrice = productPrice;
+       this.max = max;
+       this.min = min;
+   }
+
+
+   /** List for holding parts associated with a product. */
+   public ObservableList<Part> partsInProduct = FXCollections.observableArrayList();
+
+
+   /** Getter method for the associated part list.
+    * @return partsInProduct list. */
+   public ObservableList<Part> getAllAssociatedParts() {
+       return partsInProduct;
+   }
+
+
+  /** Method to add a part to the associated part list. */
+   public void addAllPartsInProduct (Part partToAdd) {
+       partsInProduct.add(partToAdd);
+   }
+
+
+   /** Getter method for the product's ID.
+    * @return product ID. */
+   public int getProductID() {
+       return productID;
+   }
+
+
+   /** Setter method for the product's ID.
+    * @param productID product ID. */
+   public void setProductID(int productID) {
+       this.productID = productID;
+   }
+
+
+   /** Getter method for the product's Name.
+    * @return product name. */
+   public String getProductName() {
+       return productName;
+   }
+
+
+   /** Setter method for the product's Name.
+    * @param productName name as a String. */
+   public void setProductName(String productName) {
+       this.productName = productName;
+   }
+
+
+   /** Getter method for the product inventory.
+    * @return product inventory. */
+   public int getProductINV() {
+       return productINV;
+   }
+
+
+   /** Setter method for the product's inventory.
+    * @param productINV product inventory as an integer. */
+   public void setProductINV(int productINV) {
+       this.productINV = productINV;
+   }
+
+
+   /** Getter method for the product's price.
+    * @return product price. */
+   public double getProductPrice() {
+       return productPrice;
+   }
+
+
+   /** Setter method for the product's price.
+    * @param productPrice price of the product. */
+   public void setProductPrice(double productPrice) {
+       this.productPrice = productPrice;
+   }
+
+
+   /** Getter method for the product maximum.
+    * @return maximum number of a product. */
+   public int getMax() {
+       return max;
+   }
+
+
+   /** Setter method for the product maximum.
+    * @param max maximum number of a product. */
+   public void setMax(int max) {
+       this.max = max;
+   }
+
+
+   /** Getter method for the product minimum.
+    * @return minimum number of a product. */
+   public int getMin() {
+       return min;
+   }
+
+
+   /** Setter method for the product minimum.
+    * @param min the minimum number of a product. */
+   public void setMin(int min) {
+       this.min = min;
+   }
+}
