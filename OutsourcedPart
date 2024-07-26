@@ -1,0 +1,37 @@
+package harwoodc482;
+
+
+/** The Outsourced Part class is available for outsourced part instances. */
+public class OutsourcedPart extends Part {
+
+
+   /** Variable of type String for the part's Company Name. */
+   private String companyName;
+
+
+   /** Class constructor for an outsourced part.
+    * @param id the part's ID
+    * @param name the part's name
+    * @param stock the part inventory
+    * @param price the price of the part
+    * @param max the maximum parts needed
+    * @param min the minimum parts needed
+    * @param companyName the part's company name. */
+   public OutsourcedPart(int id, String name, double price, int stock, int min, int max, String companyName) {
+       super(id, name, price, stock, min, max);
+       this.companyName = companyName;
+   }
+
+
+   /** Getter method for the part's company name.
+    * @return the company name. */
+   public String getCompanyName() {
+       return companyName;
+   }
+
+
+   /** Setter method for the part's company name. */
+   public void setCompanyName(String companyName) {
+       this.companyName = companyName;
+   }
+}
