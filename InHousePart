@@ -1,0 +1,42 @@
+package harwoodc482;
+
+
+//import harwoodc482.Part;
+
+
+/** The In House Part class is available for in house part instances. */
+public class InHousePart extends Part {
+
+
+   /** Machine ID of type int for an in house part. */
+   private int machineID;
+
+
+   /** Constructor for an in house part. Calls on its parent class of Part.
+    * @param id the part ID
+    * @param name the part name
+    * @param price the part price
+    * @param stock the inventory of the part
+    * @param min the maximum parts needed
+    * @param max the minimum parts needed
+    * @param machineID the part's machine ID. */
+   public InHousePart(int id, String name, double price, int stock, int min, int max, int machineID) {
+       super(id, name, price, stock, min, max);
+       this.machineID = machineID;
+   }
+
+
+   /** Getter method for the machine ID.
+    * @return machine ID. */
+   public int getMachineID() {
+       return machineID;
+   }
+
+
+   /** Setter method for the machine ID. */
+   public void setMachineID(int machineID) {
+       this.machineID = machineID;
+   }
+
+
+}
