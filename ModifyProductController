@@ -1,0 +1,327 @@
+package harwoodc482;
+
+
+import PartAndProduct.Inventory;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.Stage;
+
+
+import java.io.IOException;
+import java.net.URL;
+import java.util.Optional;
+import java.util.ResourceBundle;
+
+
+/** Modify Product class controls the methods and operation of the modify product menu. */
+public class ModifyProductMenuController implements Initializable {
+
+
+   /** Label that will switch between Company Name and Machine ID. */
+   @FXML
+   private Label MachineToCompanyID;
+
+
+   /** Name of the cancel button on the modify product menu. */
+   @FXML
+   private Button ModPartCancelBtn;
+
+
+   /** Product ID text field that is auto generated and cannot be changed. */
+   @FXML
+   private TextField ModProductIDTXT;
+
+
+   /** In House radio button. */
+   @FXML
+   private RadioButton ModPartInHouseBtn;
+
+
+   /** Product inventory text field. */
+   @FXML
+   private TextField ModProductInvTXT;
+
+
+   /** Product maximum text field. */
+   @FXML
+   private TextField ModProductMaxTXT;
+
+
+   /** Product minimum text field. */
+   @FXML
+   private TextField ModProductMinTXT;
+
+
+   /** Product name text field. */
+   @FXML
+   private TextField ModProductNameTXT;
+
+
+   /** Outsource radio button. */
+   @FXML
+   private RadioButton ModPartOutsourceBtn;
+
+
+   /** Product price text field. */
+   @FXML
+   private TextField ModProductPriceTXT;
+
+
+   /** Name of the save button on the modify product menu. */
+   @FXML
+   private Button ModPartSaveBtn;
+
+
+   /** Text field for either the Machine ID or Company Name. */
+   @FXML
+   private TextField ModPartSwitchTXT;
+
+
+   /** Part table that matches the main menu. */
+   @FXML
+   private TableView<Part> ModProductPartTable;
+
+
+   /** Part ID column. */
+   @FXML
+   private TableColumn<Part, Integer> ModProductPartIDCol;
+
+
+   /** Part Name column. */
+   @FXML
+   private TableColumn<Part, String> ModProductPartNameCol;
+
+
+   /** Part Inventory column. */
+   @FXML
+   private TableColumn<Part, Integer> ModProductINVCol;
+
+
+   /** Part Price column. */
+   @FXML
+   private TableColumn<Part, Double> ModProductPriceCol;
+
+
+   /** Table displaying the parts associated with a product. */
+   @FXML
+   private TableView<Part> ModProductSelPartTable;
+
+
+   /** Associated part ID column. */
+   @FXML
+   private TableColumn<Part, Integer> ModProductSelIDCol;
+
+
+   /** Associated part Name column. */
+   @FXML
+   private TableColumn<Part, String> ModProductSelNameCol;
+
+
+   /** Associated part Inventory column. */
+   @FXML
+   private TableColumn<Part, Integer> ModProductSelINVCol;
+
+
+   /** Associated part Price column. */
+   @FXML
+   private TableColumn<Part, Integer> ModProductSelPriceCol;
+
+
+   /** List containing parts associated with a product. */
+   private static ObservableList<Part> partsOfTheProduct = FXCollections.observableArrayList();
+
+
+   /** Variable of type Product that will hold the product to modify selected in the main menu. */
+   private Product productToModify;
+
+
+   /** Text field where a user will search for a part. */
+   @FXML
+   private TextField ModProductPartSearch;
+
+
+   /** Sets the text fields for the product to modify.
+    * Sets the part table with the full inventory of parts.
+    * Sets the associated parts table with all associated parts if any.
+    * @param url resolves paths for the root object.
+    * @param resourceBundle localizes the root object. */
+   @Override
+   public void initialize(URL url, ResourceBundle resourceBundle) {
+       productToModify = MainMenuController.getProductToModify();
+       //partsOfTheProduct = productToModify.getAllAssociatedParts();
+
+
+       ModProductPartTable.setItems(Inventory.getAllParts());
+       ModProductPartIDCol.setCellValueFactory(new PropertyValueFactory<>("id"));
+       ModProductPartNameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
+       ModProductINVCol.setCellValueFactory(new PropertyValueFactory<>("stock"));
+       ModProductPriceCol.setCellValueFactory(new PropertyValueFactory<>("price"));
+
+
+       ModProductSelPartTable.setItems(productToModify.getAllAssociatedParts());
+       ModProductSelIDCol.setCellValueFactory(new PropertyValueFactory<>("id"));
+       ModProductSelNameCol.setCellValueFactory(new PropertyValueFactory<>("name"));
+       ModProductSelINVCol.setCellValueFactory(new PropertyValueFactory<>("stock"));
+       ModProductSelPriceCol.setCellValueFactory(new PropertyValueFactory<>("price"));
+
+
+       ModProductIDTXT.setText(String.valueOf(productToModify.getProductID()));
+       ModProductIDTXT.setEditable(false);
+       ModProductNameTXT.setText(productToModify.getProductName());
+       ModProductInvTXT.setText(String.valueOf(productToModify.getProductINV()));
+       ModProductPriceTXT.setText(String.valueOf(productToModify.getProductPrice()));
+       ModProductMaxTXT.setText(String.valueOf(productToModify.getMax()));
+       ModProductMinTXT.setText(String.valueOf(productToModify.getMin()));
+   }
+
+
+   /** Reference variable of type Stage. Allows for multiple scenes. */
+   Stage stage;
+
+
+   /** Holds the contents of the FXML document. */
+   Parent scene;
+
+
+   /** Searches for a part in the available part table. Displays an error if the part is not found.
+    * @param event  user enters a string to search for a part. */
+   public void ModProductPartSearching(ActionEvent event) {
+       if (ModProductPartSearch.getText().isEmpty()) {
+           ModProductPartTable.setItems(Inventory.getAllParts());
+       }
+
+
+       ObservableList<Part> allPartsInInventory = Inventory.getAllParts();
+       ObservableList<Part> partFromInventory = FXCollections.observableArrayList();
+       String userString = ModProductPartSearch.getText();
+       for (Part part : allPartsInInventory) {
+           if (String.valueOf(part.getId()).contains(userString) || part.getName().contains(userString)) {
+               partFromInventory.add(part);
+           }
+       }
+       ModProductPartTable.setItems(partFromInventory);
+       if(partFromInventory.isEmpty()) {
+           Alert alert = new Alert(Alert.AlertType.ERROR);
+           alert.setTitle("Part not found");
+           alert.setContentText("Part searched is not in inventory");
+           alert.showAndWait();
+       }
+   }
+
+
+   /** Adds a part to the associated part table.
+    * @param event user selects the add button. */
+   @FXML
+   public void ModProductAddBtnSelected(ActionEvent event) {
+       Part partSelected = ModProductPartTable.getSelectionModel().getSelectedItem();
+
+
+       if(partsOfTheProduct.contains(partSelected)) {
+           partsOfTheProduct.clear();
+           partsOfTheProduct.add(partSelected);
+           ModProductSelPartTable.setItems(partsOfTheProduct);
+       }
+
+
+       else {
+           partsOfTheProduct.add(partSelected);
+           //productToModify.partsInProduct.add(partSelected);
+           //ModProductSelPartTable.setItems(productToModify.getAllAssociatedParts());
+
+
+           ModProductSelPartTable.setItems(partsOfTheProduct);
+       }
+
+
+   }
+
+
+   /** Removes a part from the associated part table and list.
+    * @param event user selects the remove button. */
+   public void ModProductRmvAscPartBtnSelected(ActionEvent event) {
+       Part partToDelete = ModProductSelPartTable.getSelectionModel().getSelectedItem();
+       Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+       alert.setTitle("Warning");
+       alert.setContentText("Are you sure you want to remove this part?");
+       Optional<ButtonType> userChoice = alert.showAndWait();
+
+
+       if(userChoice.isPresent() && userChoice.get() == ButtonType.OK) {
+           partsOfTheProduct.remove(partToDelete);
+           ModProductSelPartTable.setItems(partsOfTheProduct);
+           //productToModify.partsInProduct.remove(partToDelete);
+           //ModProductSelPartTable.setItems(productToModify.getAllAssociatedParts());
+       }
+
+
+   }
+
+
+   /** Saves the modified product to the stored items inventory.
+    * Automatically takes a user back to the main menu if product is successfully added.
+    * @param event user selects the save button. */
+   public void ModProductSaveBtnSelected(ActionEvent event) {
+       try {
+           int modProductID = productToModify.getProductID();
+           String modProductName = ModProductNameTXT.getText();
+           int modProductINV = Integer.parseInt(ModProductInvTXT.getText());
+           double modProductPrice = Double.parseDouble(ModProductPriceTXT.getText());
+           int modProductMax = Integer.parseInt(ModProductMaxTXT.getText());
+           int modProductMin = Integer.parseInt(ModProductMinTXT.getText());
+
+
+           if(modProductINV > modProductMax || modProductINV < modProductMin || modProductMin >= modProductMax) {
+               Alert alert = new Alert(Alert.AlertType.ERROR);
+               alert.setTitle("Inventory not sufficient for provided max and min values");
+               alert.setContentText("Check the minimum and maximum values");
+               alert.showAndWait();
+           }
+           else {
+               int index = Inventory.getAllProducts().indexOf(productToModify);
+               Product productToMod = new Product(modProductID, modProductName, modProductINV, modProductPrice, modProductMax, modProductMin);
+
+
+               for (Part part : partsOfTheProduct) {
+                  productToMod.addAllPartsInProduct(part);
+              }
+
+
+               Inventory.updateProduct(index, productToMod);
+
+
+               ModProductCancelBtnSelected(event); //return to the main menu after the product has been added
+
+
+           }
+
+
+       }catch(Exception InvalidInput) {
+           Alert alert = new Alert(Alert.AlertType.ERROR);
+           alert.setTitle("Error");
+           alert.setHeaderText("Product could not be added");
+           alert.setContentText("Text fields are empty or contain invalid values");
+           alert.showAndWait();
+       }
+   }
+
+
+   /** Directs the user back to the main menu.
+    * @param event user selects the cancel button. */
+   @FXML
+   public void ModProductCancelBtnSelected(ActionEvent event) throws IOException {
+       stage = (Stage) ((Button)event.getSource()).getScene().getWindow();
+       scene = FXMLLoader.load(getClass().getResource("MainMenu.fxml"));
+       stage.setScene(new Scene(scene));
+       stage.show();
+   }
+
+
+}
